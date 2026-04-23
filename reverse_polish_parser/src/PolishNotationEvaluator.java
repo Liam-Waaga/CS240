@@ -1,70 +1,47 @@
 public class PolishNotationEvaluator {
     public static double parse(String expression) {
 
-        Node<Tokens> tokens = parse_expr(expression);
+        expression += " ";
+        Node<Token> tokens = parse_expr(expression);
         return evaluate_tokens(tokens);
 
     }
 
-    private static Node<Tokens> parse_expr(String expr) {
+    private static Node<Token> parse_expr(String expr) {
         Tokens op = null;
         Tokens lhs = null;
         Tokens rhs = null;
 
-        Node<Tokens> toks = null;
+        Node<Token> toks = null;
 
-        for (int i = 0; i < expr.length(); i++) {
+        String[] parts = expr.split("\\s+");
+
+        for (int i = 0; i < parts.length; i++) {
             /* turn it into a tree */
             Tokens token = null;
+            double val = 0;
             /* grab the token */
-            switch (expr.charAt(i)) {
-                case '+':
+            switch (parts[i]) {
+                case "+":
                     token = Tokens.OP_PLUS;
                     break;
-                case '-':
+                case "-":
                     token = Tokens.OP_MINUS;
                     break;
-                case '*':
+                case "*":
                     token = Tokens.OP_MULT;
                     break;
-                case '/':
+                case "/":
                     token = Tokens.OP_DIV;
                     break;
-                case '0':
-                    token = Tokens.NUM_ZERO;
-                    break;
-                case '1':
-                    token = Tokens.NUM_ONE;
-                    break;
-                case '2':
-                    token = Tokens.NUM_TWO;
-                    break;
-                case '3':
-                    token = Tokens.NUM_THREE;
-                    break;
-                case '4':
-                    token = Tokens.NUM_FOUR;
-                    break;
-                case '5':
-                    token = Tokens.NUM_FIVE;
-                    break;
-                case '6':
-                    token = Tokens.NUM_SIX;
-                    break;
-                case '7':
-                    token = Tokens.NUM_SEVEN;
-                    break;
-                case '8':
-                    token = Tokens.NUM_EIGHT;
-                    break;
-                case '9':
-                    token = Tokens.NUM_NINE;
-                    break;
-                case ' ':
-                    continue;
                 default:
-                    System.err.println("Invalid token");
-                    continue;
+                    try {
+                        val = Double.parseDouble(parts[i]);
+                    } catch (java.lang.Throwable e) {
+                        System.err.printf("invalid token at %d\n", i);
+                        continue;
+                    }
+                    token = Tokens.NUM_FLOAT;
             }
 
             if (op == null) { /* operator is not set (and comes first) */
@@ -73,7 +50,7 @@ public class PolishNotationEvaluator {
                     new Exception().printStackTrace();
                     System.exit(1);
                 }
-                toks = new Node<Tokens>(op, null, null); /* init toks for the first time */
+                toks = new Node<Token>(new Token(op, val), null, null); /* init toks for the first time */
             } else if (lhs == null) {
                 lhs = token;
                 if (is_op(lhs)) {
@@ -81,7 +58,7 @@ public class PolishNotationEvaluator {
                     toks.setLeft(parse_expr(expr.substring(i)));
                     i = toks.getLeft().getEnd_point() + i;
                 } else {
-                    toks.setLeft(new Node<Tokens>(lhs, null, null));
+                    toks.setLeft(new Node<Token>(new Token(lhs, val), null, null));
                 }
             } else if (rhs == null) {
                 rhs = token;
@@ -90,7 +67,7 @@ public class PolishNotationEvaluator {
                     toks.setRight(parse_expr(expr.substring(i)));
                     i = toks.getRight().getEnd_point() + i;
                 } else {
-                    toks.setRight(new Node<Tokens>(rhs, null, null));
+                    toks.setRight(new Node<Token>(new Token(rhs, val), null, null));
                 }
             } else {
                 break;
@@ -108,7 +85,7 @@ public class PolishNotationEvaluator {
                 tok == Tokens.OP_DIV;
     }
 
-    private static double evaluate_tokens(Node<Tokens> toks) {
+    private static double evaluate_tokens(Node<Token> toks) {
         double left = 0;
         double right = 0;
         if (toks.getLeft() != null) {
@@ -118,31 +95,14 @@ public class PolishNotationEvaluator {
             right = evaluate_tokens(toks.getRight());
         }
 
-        switch (toks.getObj()) {
+        switch (toks.getObj().getTok()) {
             /*
              * if this isn't an operator, then it is a number, in which case the expressions
              * value is simply the integer associated with the token
              */
-            case NUM_ZERO:
-                return 0;
-            case NUM_ONE:
-                return 1;
-            case NUM_TWO:
-                return 2;
-            case NUM_THREE:
-                return 3;
-            case NUM_FOUR:
-                return 4;
-            case NUM_FIVE:
-                return 5;
-            case NUM_SIX:
-                return 6;
-            case NUM_SEVEN:
-                return 7;
-            case NUM_EIGHT:
-                return 8;
-            case NUM_NINE:
-                return 9;
+            case Tokens.NUM_FLOAT:
+                /* return val */
+                return toks.getObj().getValue();
             /* this must be the composition of two expressions and an operator */
             case Tokens.OP_PLUS:
                 return left + right;
