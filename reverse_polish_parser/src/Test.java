@@ -19,8 +19,8 @@ public class Test {
         System.out.println("+ 3 * 2 * 2 2 => expected=11.0, actual=" + PolishNotationEvaluator.parse("+ 3 * 2 * 2 2"));
         System.out.println("- * + 1 2 3 4 => expected=5.0, actual=" + PolishNotationEvaluator.parse("- * + 1 2 3 4"));
         System.out.println("* + * 1 2 3 4 => expected=20.0, actual=" + PolishNotationEvaluator.parse("* + * 1 2 3 4"));
-        System.out.println("/ + 8 * 2 2 4 => expected=4.0, actual=" + PolishNotationEvaluator.parse("/ + 8 * 2 2 4"));
-        System.out.println("+ * + 1 2 3 * 4 5 => expected=26.0, actual=" + PolishNotationEvaluator.parse("+ * + 1 2 3 * 4 5"));
+        System.out.println("/ + 8 * 2 2 4 => expected=3.0, actual=" + PolishNotationEvaluator.parse("/ + 8 * 2 2 4"));
+        System.out.println("+ * + 1 2 3 * 4 5 => expected=29.0, actual=" + PolishNotationEvaluator.parse("+ * + 1 2 3 * 4 5"));
         System.out.println("- + * 2 3 4 * 1 2 => expected=8.0, actual=" + PolishNotationEvaluator.parse("- + * 2 3 4 * 1 2"));
         System.out.println("* - + 9 1 2 + 3 4 => expected=56.0, actual=" + PolishNotationEvaluator.parse("* - + 9 1 2 + 3 4"));
         System.out.println("/ * + 2 2 3 + 4 4 => expected=1.5, actual=" + PolishNotationEvaluator.parse("/ * + 2 2 3 + 4 4"));
