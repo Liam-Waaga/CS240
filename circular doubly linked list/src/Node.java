@@ -9,27 +9,28 @@ public class Node<T> {
         this.next = next;
     }
 
-    public T getObj() {
+    public T obj() {
         return obj;
     }
 
-    public void setObj(T obj) {
+    public void obj(T obj) {
         this.obj = obj;
     }
 
-    public Node<T> getNext() {
+    public Node<T> next() {
         return next;
     }
 
-    public void setNext(Node<T> next) {
+    public void next(Node<T> next) {
         this.next = next;
     }
 
-    public Node<T> getPrev() {
+    public Node<T> prev() {
         return prev;
     }
 
-    public void setPrev(Node<T> prev) {
+    public void prev(Node<T> prev) {
         this.prev = prev;
     }
 }
+
