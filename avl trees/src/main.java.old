@@ -1,0 +1,54 @@
+public class main {
+
+    public static void main(String[] args) {
+
+        AVLTree<Integer> tree = new AVLTree<>();
+
+        tree.insert(Integer.valueOf(36));
+        tree.insert(Integer.valueOf(0));
+        tree.insert(Integer.valueOf(13));
+        tree.insert(Integer.valueOf(14));
+        tree.insert(Integer.valueOf(56));
+        tree.insert(Integer.valueOf(24));
+        tree.insert(Integer.valueOf(78));
+        tree.insert(Integer.valueOf(89));
+        tree.insert(Integer.valueOf(54));
+        tree.insert(Integer.valueOf(16));
+        tree.insert(Integer.valueOf(72));
+        tree.insert(Integer.valueOf(79));
+        tree.insert(Integer.valueOf(62));
+        tree.insert(Integer.valueOf(77));
+        tree.insert(Integer.valueOf(96));
+        tree.insert(Integer.valueOf(59));
+        tree.insert(Integer.valueOf(63));
+        tree.insert(Integer.valueOf(43));
+        tree.insert(Integer.valueOf(73));
+        tree.insert(Integer.valueOf(53));
+        tree.insert(Integer.valueOf(25));
+        tree.insert(Integer.valueOf(10));
+        tree.insert(Integer.valueOf(46));
+        tree.insert(Integer.valueOf(48));
+        tree.insert(Integer.valueOf(28));
+
+        tree.print();
+
+        tree.remove(Integer.valueOf(53));
+        tree.remove(Integer.valueOf(28));
+        tree.remove(Integer.valueOf(72));
+        tree.remove(Integer.valueOf(77));
+        tree.remove(Integer.valueOf(13));
+        tree.remove(Integer.valueOf(79));
+        tree.remove(Integer.valueOf(54));
+        tree.remove(Integer.valueOf(62));
+        tree.remove(Integer.valueOf(16));
+        tree.remove(Integer.valueOf(10));
+
+        tree.insert(Integer.valueOf(53));
+        tree.insert(Integer.valueOf(16));
+        tree.insert(Integer.valueOf(10));
+        tree.insert(Integer.valueOf(13));
+        tree.insert(Integer.valueOf(54));
+
+        
+    }    
+}

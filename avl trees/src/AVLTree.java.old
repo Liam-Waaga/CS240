@@ -1,0 +1,302 @@
+
+
+public class AVLTree<T extends Comparable<T>> {
+    
+    public class AVLNode<E extends Comparable<E>> {
+
+        protected E obj;
+
+        protected AVLNode<E> left;
+        protected AVLNode<E> right;
+        protected AVLNode<E> parent;
+
+        private int height = 0;
+
+        public AVLNode(E obj, AVLNode<E> left, AVLNode<E> right, AVLNode<E> parent) {
+            this.obj = obj;
+            this.left = left;
+            this.right = right;
+            this.parent = parent;
+        }
+
+        public void print() {
+            if (left != null) left.print();
+            System.out.print(obj + ", ");
+            if (right != null) right.print();
+        }
+
+        private int balance_factor() {
+            int left_height = 0;
+            int right_height = 0;
+
+            if (left != null) {
+                left_height = left.height;
+            }
+
+            if (right != null) {
+                right_height = right.height;
+            }
+
+            return left_height - right_height;
+        }
+
+        public int height() {
+            this.height = Math.max((left != null) ? left.height() : 0, (right != null) ? right.height() : 0) + 1;
+            return this.height;
+        }
+
+
+        public E remove(E obj) {
+            AVLNode<E> curr = this;
+            boolean left = false;
+            while (curr != null) {
+                if (curr.obj.compareTo(obj) < 0) {
+                    curr = curr.right;
+                    left = false;
+                } else if (curr.obj.compareTo(obj) > 0) {
+                    curr = curr.left;
+                    left = true;
+                } else {
+                    break;
+                }
+            }
+            if (curr == null) {
+                throw new IllegalArgumentException();
+            }
+
+            E removed = null;
+
+
+            if (curr.right == null && curr.left == null) {
+                if (left) {
+                    curr.parent.left = null;
+                } else {
+                    curr.parent.right = null;
+                }
+
+                removed = curr.obj;
+            } else if (curr.right != null && curr.left == null) {
+                if (left) {
+                    curr.parent.left = curr.right;
+                } else {
+                    curr.parent.right = curr.right;
+                }
+                curr.right.parent = curr.parent;
+
+                removed = curr.obj;
+            } else if (curr.right == null) {
+                if (left) {
+                    curr.parent.left = curr.left;
+                } else {
+                    curr.parent.right = curr.left;
+                }
+                curr.left.parent = curr.parent;
+
+                removed = curr.obj;
+            } else {
+                AVLNode<E> min = curr.right;
+                while (min.left != null) min = min.left;
+                
+                curr.left.parent = min;
+                curr.right.parent = min;
+                if (left) curr.parent.left = min;
+                else curr.parent.right = min;
+
+                
+                min.left = curr.left;
+                min.right = curr.right;
+                
+                removed = curr.obj;
+
+                {
+                    AVLNode<E> tmp = min.parent;
+                    min.parent = curr.parent;
+                    curr = tmp;
+                }
+            }
+
+
+            while (curr != null) {
+                curr.height();
+
+                if (curr.balance_factor() > 1 && curr.left.balance_factor() >= 0) {
+                    curr = rotate_right(curr);
+
+                } else if (curr.balance_factor() < -1 && curr.right.balance_factor() <= 0) {
+                    curr = rotate_left(curr);
+
+                } else if (curr.balance_factor() > 1 && curr.left.balance_factor() < 0) {
+                    curr.left = rotate_left(curr.left);
+                    curr = rotate_right(curr);
+
+                } else if (curr.balance_factor() < -1 && curr.right.balance_factor() > 0) {
+                    curr.right = rotate_right(curr.right);
+                    curr = rotate_left(curr);
+
+                }
+
+                curr = curr.parent;
+            }
+            return removed;
+        }
+
+
+        // private static <X extends Comparable<X>> AVLNode<X> rotate_left(AVLNode<X> node) {
+        //     AVLNode<X> top = node.right;
+            
+        //     node.right = node.right.left;
+        //     top.left = node;
+        //     top.parent = node.parent;
+        //     if (node.parent != null) {
+        //         if (node.parent.left == node) {
+        //             top.parent.left = top;
+        //         } else {
+        //             top.parent.right = top;
+        //         }
+        //     }
+        //     node.parent = top;
+        //     if (node.right != null)
+        //         node.right.parent = node;
+        //     return top;
+        // }
+
+
+        // private static <X extends Comparable<X>> AVLNode<X> rotate_right(AVLNode<X> node) {
+        //     AVLNode<X> top = node.left;
+            
+        //     node.left = node.left.right;
+        //     top.right = node;
+        //     top.parent = node.parent;
+        //     if (node.parent != null) {
+        //         if (node.parent.left == node) {
+        //             top.parent.left = top;
+        //         } else {
+        //             top.parent.right = top;
+        //         }
+        //     }
+        //     node.parent = top;
+        //     if (node.left != null)
+        //         node.left.parent = node;
+        //     return top;
+        // }
+
+        private static <X extends Comparable<X>> AVLNode<X> rotate_left(AVLNode<X> node) {
+            if (node == null) return null;
+            AVLNode<X> top = node.right;
+            if (top == null) return node; /* nothing to rotate */
+
+            /* perform rotation */
+            node.right = top.left;
+            if (top.left != null) top.left.parent = node;
+
+            top.left = node;
+
+            /* reconnect parent of original node to top */
+            top.parent = node.parent;
+            if (node.parent != null) {
+                if (node.parent.left == node) node.parent.left = top;
+                else node.parent.right = top;
+            }
+
+            node.parent = top;
+
+            return top;
+        }
+
+        private static <X extends Comparable<X>> AVLNode<X> rotate_right(AVLNode<X> node) {
+            if (node == null) return null;
+            AVLNode<X> top = node.left;
+            if (top == null) return node; /* nothing to rotate */
+
+            /* perform rotation */
+            node.left = top.right;
+            if (top.right != null) top.right.parent = node;
+
+            top.right = node;
+
+            // reconnect parent of original node to top
+            top.parent = node.parent;
+            if (node.parent != null) {
+                if (node.parent.left == node) node.parent.left = top;
+                else node.parent.right = top;
+            }
+
+            node.parent = top;
+
+            return top;
+        }
+    }
+
+    private AVLNode<T> root = null;
+
+    public AVLTree() {}
+
+    public void print() {
+        root.print();
+    }
+
+    public void insert(T obj) {
+        if (root == null) {
+            root = new AVLNode<T>(obj, null, null, null);
+        } else {
+
+            AVLNode<T> curr = root;
+            AVLNode<T> prev = curr;
+            boolean left = false;
+            while (curr != null) {
+                prev = curr;
+                if (curr.obj.compareTo(obj) < 0) {
+                    curr = curr.right;
+                    left = false;
+                } else if (curr.obj.compareTo(obj) > 0) {
+                    curr = curr.left;
+                    left = true;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+            if (left) {
+                prev.left = new AVLNode<T>(obj, null, null, prev);
+            } else {
+                prev.right = new AVLNode<T>(obj, null, null, prev);
+            }
+
+            while (true) {
+                root.height();
+
+                if (prev.balance_factor() > 1 && prev.left.obj.compareTo(obj) > 0) {
+                    prev = AVLNode.rotate_left(prev);
+
+                } else if (prev.balance_factor() < -1 && prev.right.obj.compareTo(obj) < 0) {
+                    prev = AVLNode.rotate_right(prev);
+
+                } else if (prev.balance_factor() > 1 && prev.left.obj.compareTo(obj) < 0) {
+                    prev.left = AVLNode.rotate_left(prev.left);
+                    prev = AVLNode.rotate_right(prev);
+
+                } else if (prev.balance_factor() < -1 && prev.right.obj.compareTo(obj) > 0) {
+                    prev.right = AVLNode.rotate_right(prev.right);
+                    prev = AVLNode.rotate_left(prev);
+
+                }
+                if (prev.parent == null) {
+                    root = prev;
+                    break;
+                }
+
+                prev = prev.parent;
+            }
+
+
+
+        }
+    }
+
+    public T remove(T obj) {
+        if (root == null) {
+            throw new IllegalArgumentException();
+        }
+
+        return root.remove(obj);
+    }
+}
