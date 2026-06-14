@@ -27,6 +27,8 @@ public class Main {
         loop:
         while (true) {
             System.out.print("\n\t$ ");
+
+            /* fix crash when stdin is closed (like with ^D) */
             try {
                 command = stdin.nextLine();
             } catch (Exception e) {
@@ -36,6 +38,7 @@ public class Main {
             
 
             if (emergency_queue.size() != 0) {
+                /* print as red bold */
                 System.out.println("\u001b[1;31mEMERGENCY TICKETS EXIST. SOLVE THEM NOW.\u001b[0m");
             }
 
@@ -43,10 +46,12 @@ public class Main {
                 case "add":
                     System.out.println("What is the ticket message?");
                     String message = stdin.nextLine();
+
                     System.out.println("What is the priority? LOW, MEDIUM, HIGH, EMERGENCY");
                     String input_string;
                     Ticket.Priority priority;
                     inner:
+                    /* ask for the priority */
                     while (true) {
                         input_string = stdin.nextLine().toLowerCase();
                         switch (input_string) {
@@ -66,6 +71,7 @@ public class Main {
                                 break;
                         }
                     }
+                    /* put it into the correct queue */
                     switch (priority) {
                         case Ticket.Priority.LOW:
                             low_queue.add(new Ticket(message, priority));
@@ -86,6 +92,8 @@ public class Main {
                 case "solve":
                     System.out.println("What is the priority of the ticket? LOW, MEDIUM, HIGH, EMERGENCY");
                     String input_string1;
+
+                    /* find out which queue to remove it from and remove it */
                     inner:
                     while (true) {
                         input_string1 = stdin.nextLine().toLowerCase();
@@ -111,12 +119,16 @@ public class Main {
                 case "print":
                     System.out.println("\nNext LOW priority ticket");
                     System.out.println(low_queue.size() != 0 ? low_queue.peek().get_message() : "no LOW priority tickets");
+                    
                     System.out.println("\nNext MEDIUM priority ticket");
                     System.out.println(medium_queue.size() != 0 ? medium_queue.peek().get_message() : "no MEDIUM priority tickets");
+                    
                     System.out.println("\nNext HIGH priority ticket");
                     System.out.println(high_queue.size() != 0 ? high_queue.peek().get_message() : "no HIGH priority tickets");
+                    
                     System.out.println("\nNext EMERGENCY priority ticket");
                     System.out.println(emergency_queue.size() != 0 ? emergency_queue.peek().get_message() : "no EMERGENCY priority tickets");
+                    
                     break;
                 case "exit":
                     break loop;
